@@ -1,0 +1,27 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
+.link {
+    color: #08C;
+    cursor: pointer;
+}
+
+.well-green {
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.well-red {
+    background: rgba(255, 0, 0, 0.1);
+}
+
+textarea {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
