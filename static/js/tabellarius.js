@@ -28,7 +28,7 @@ renderUser = function (el) {
 
 $('.user').live('click', function () {
   var $this = $(this);
-  $this.css('background','');
+  $this.css('background', '');
   $('#conversation-header').show().data('_id', $this.data('_id'));
   $('#conversation-name').text($this.text());
   $('#conversation-number').text("(" + $this.data('number') + ")");
@@ -105,9 +105,9 @@ connectWebSocket = function () {
             $($message).insertBefore('#messages textarea');
           else $($message).insertAfter('#messages div:last');
         else {
-          $('#users-sidebar li').each(function(){
-            if(el.message.value.fromto == $(this).data('_id'))
-              $(this).css('background','#EDEDED')
+          $('#users-sidebar li').each(function () {
+            if (el.message.value.fromto == $(this).data('_id'))
+              $(this).css('background', '#EDEDED')
           })
         }
       }
