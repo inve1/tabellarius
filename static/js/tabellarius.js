@@ -1,7 +1,7 @@
 renderMessage = function (el) {
   var $message, $tmp;
   $message = $('<div></div>').addClass('row-fluid');
-  if (el.value.is_sent) {
+  if (el.value.is_sent) { //add space on the left
     $tmp = $('<div></div>').addClass('span5');
     $message.append($tmp);
   }
@@ -15,7 +15,23 @@ renderMessage = function (el) {
   return $message;
 };
 
+renderUser = function (el) {
+  var $li = $('<li></li>');
+  $li
+    .data('_id', el.key)
+    .data('number', el.value['number'])
+    .text(el.value['name'])
+    .addClass('link')
+    .addClass('user');
+  return $li;
+};
+
 $('.user').live('click', function () {
+  var $this = $(this);
+  $this.css('background','');
+  $('#conversation-header').show().data('_id', $this.data('_id'));
+  $('#conversation-name').text($this.text());
+  $('#conversation-number').text("(" + $this.data('number') + ")");
   $.get('/messages/' + $(this).data('_id'))
     .done(function (data) {
       $('#messages').empty();
@@ -25,7 +41,7 @@ $('.user').live('click', function () {
         $message = renderMessage(el);
         $('#messages').append($message);
       });
-      $form = $('<textarea></textarea>').data('_id', $data[0].key);
+      $form = $('<textarea></textarea>').data('_id', $this.data('_id'));
       $('#messages').append($form);
     })
     .fail(function () {
@@ -44,13 +60,30 @@ $('textarea').live('keyup', function (e) {
   }
 });
 
+$('#new-user-number').live('keyup', function (e) {
+  if (e.which === 13)
+    $('#add-users-confirm-button').click();
+});
+
+$('#add-users-confirm-button').live('click', function () {
+  var $newUserName = $('#new-user-name')
+    , $newUserNumber = $('#new-user-number');
+  $.post('/users/' + $newUserName.val() + '/' + $newUserNumber.val() + '/')
+    .fail(function () {
+      console.log('non va');
+    });
+  $newUserName.val('');
+  $newUserNumber.val('');
+});
+
 function message (msg) {
   console.log(msg);
 }
 
 connectWebSocket = function () {
+  var $user, $message;
   try {
-    var host = "ws://192.168.30.70:8080/";
+    var host = "ws://i1.m-2.it:8080/";
     window.socket = new WebSocket(host);
 
     message('Socket Status: ' + socket.readyState);
@@ -61,8 +94,23 @@ connectWebSocket = function () {
 
     socket.onmessage = function (msg) {
       var el = $.parseJSON(msg.data);
-      $message = renderMessage(el);
-      $($message).insertAfter('#messages div:last');
+      if (el.user !== undefined) { //user
+        $user = renderUser(el.user);
+        $($user).insertAfter('#users-sidebar li:last');
+      }
+      else if (el.message !== undefined) {
+        $message = renderMessage(el.message);
+        if (el.message.value.fromto == $('#conversation-header').data('_id'))
+          if ($('#messages div').length === 0)
+            $($message).insertBefore('#messages textarea');
+          else $($message).insertAfter('#messages div:last');
+        else {
+          $('#users-sidebar li').each(function(){
+            if(el.message.value.fromto == $(this).data('_id'))
+              $(this).css('background','#EDEDED')
+          })
+        }
+      }
     };
 
     socket.onclose = function () {
@@ -80,13 +128,7 @@ initTabellarius = function () {
       var $data = $($.parseJSON(data))
         , $li;
       $data.each(function (i, el) {
-        $li = $('<li></li>');
-        $li
-          .data('_id', el.key)
-          .data('number', el.value['number'])
-          .text(el.value['name'])
-          .addClass('link')
-          .addClass('user');
+        $li = renderUser(el);
         $('#users-sidebar').append($li);
       });
     })

@@ -25,3 +25,24 @@ textarea {
     height: 100%;
     box-sizing: border-box;
 }
+
+.border-box {
+    box-sizing: border-box;
+    height: 100% !important;
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
+}
+.display-none {
+    display: none;
+}
+
+.link.user {
+    line-height: 20px;
+}
+
+.link.user:hover {
+    background: #EDEDED;
+}
