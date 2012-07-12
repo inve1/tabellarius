@@ -12,13 +12,11 @@ EventMachine.run {
 
             ws.onclose { @channel.unsubscribe(sid) }
             ws.onmessage { |msg|
-                puts msg
                 mess = JSON.parse(msg)
                 num = mess['number']
                 r = RestClient.post "http://127.0.0.1/messages/#{num}", {'text' => mess['text'] }
                 puts r.code
                 puts r.to_str
-
                 @channel.push r.to_str
             }
         }

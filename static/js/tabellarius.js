@@ -50,7 +50,7 @@ function message (msg) {
 
 connectWebSocket = function () {
   try {
-    var host = "ws://192.168.0.13:8080/";
+    var host = "ws://192.168.30.70:8080/";
     window.socket = new WebSocket(host);
 
     message('Socket Status: ' + socket.readyState);
